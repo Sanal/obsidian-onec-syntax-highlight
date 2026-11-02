@@ -1,0 +1,24 @@
+{
+  "name": "obsidian-onec-syntax-highlight",
+  "version": "1.0.0",
+  "description": "Syntax highlighting for 1C:Enterprise (BSL) code blocks in Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "1с",
+    "1c",
+    "bsl"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "builtin-modules": "^4.0.0",
+    "esbuild": "^0.24.0",
+    "obsidian": "^1.7.0",
+    "typescript": "^5.7.0",
+    "prettier": "^3.9.10"
+  }
+}

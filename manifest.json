@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-onec-syntax-highlight",
+  "name": "1C (BSL) Language Support",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "1C (BSL) Language Support for Markdown files in Obsidian",
+  "author": "Sanal Tserenov",
+  "authorUrl": "https://github.com/Sanal",
+  "isDesktopOnly": false
+}
