@@ -4,9 +4,8 @@ import { BUILTINS, KEYWORDS_EN, KEYWORDS_RU, LITERALS_EN, LITERALS_RU, TYPES } f
 // и не распознаёт кириллический тег «1с» из класса language-*,
 // поэтому плагин дополнительно нормализует класс до «language-1c».
 
-// Кириллические диапазоны для границ слов (как в грамматике bsl из Prism)
-const CYR =
-	"\\u0400-\\u0484\\u0487-\\u052f\\u1d2b\\u1d78\\u2de0-\\u2dff\\ua640-\\ua69f\\ufe2e-\\ufe2f";
+// Кириллические диапазоны для границ слов
+const CYR = "\\u0400-\\u04ff";
 const WORD_CHARS = `\\w${CYR}`;
 
 function alternation(words: string): string {
