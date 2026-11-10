@@ -17,7 +17,9 @@ Syntax highlighting for the **1C:Enterprise built-in language (BSL)** in Obsidia
 - strings, including multiline ones with `|` continuation and `""` escaping;
 - date literals `'20240101'`, numbers, `//` and `/* … */` comments;
 - preprocessor directives (`#Если Сервер Тогда`, `#Область`) and annotations (`&НаСервере`, `&Перед("Имя")`);
-- procedure and function names are highlighted at declaration.
+- procedure and function names are highlighted at declaration, along with their parameters;
+- operators (`=`, `+`, `*`, comparisons, `И`/`Или`/`Не`…) and punctuation;
+- the token model matches the reference 1c-syntax grammar, in both reading and editing modes.
 
 ## Installation
 
