@@ -1,5 +1,8 @@
 # 1C (BSL) Language Support
 
+> [!WARNING]
+> This plugin was created with the help of AI and has not been thoroughly reviewed or tested. It is still a work in progress and may contain bugs. Use it at your own risk, and please report any issues you find.
+
 Syntax highlighting for the **1C:Enterprise built-in language (BSL)** in Obsidian code blocks — both in reading mode and in the editor.
 
 ## Supported tags
