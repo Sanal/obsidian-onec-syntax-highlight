@@ -7,7 +7,7 @@ Syntax highlighting for the **1C:Enterprise built-in language (BSL)** in Obsidia
 
 ## Supported tags
 
-`1c` in any letter case, Cyrillic or Latin. The `bsl` tag is also supported.
+`1c` in any letter case, Cyrillic or Latin. The `bsl` and `os` (OneScript) tags are also supported.
 
 ## Features
 

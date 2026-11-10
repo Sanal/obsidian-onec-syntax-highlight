@@ -21,12 +21,12 @@ declare global {
 // Режимы редактора: Obsidian извлекает из info-строки блока только
 // символы [\w\/+#-]*. Поэтому «1c» → режим 1c, «1C» → режим 1C,
 // а кириллические «1с»/«1С» обрезаются до «1». Покрываем все варианты,
-// плюс каноническое имя bsl.
-const EDITOR_MODE_NAMES = ['1c', '1C', '1', 'bsl'];
+// плюс канонические имена bsl и os (OneScript).
+const EDITOR_MODE_NAMES = ['1c', '1C', '1', 'bsl', 'os'];
 
-// Класс language-* для любого из вариантов тега: 1c, 1C, 1с, 1С
-const LANGUAGE_CLASS_TEST = /(?:^|\s)language-1[cс](?=\s|$)/i;
-const LANGUAGE_CLASS_REPLACE = /language-1[cс](?=\s|$)/gi;
+// Класс language-* для любого из вариантов тега: 1c, 1C, 1с, 1С, bsl, os
+const LANGUAGE_CLASS_TEST = /(?:^|\s)language-(?:1[cс]|bsl|os)(?=\s|$)/i;
+const LANGUAGE_CLASS_REPLACE = /language-(?:1[cс]|bsl|os)(?=\s|$)/gi;
 
 // Грамматика режима чтения собирается один раз. Prism входит в бандл
 // плагина, чтобы подсветка не зависела от версии Prism в Obsidian.
