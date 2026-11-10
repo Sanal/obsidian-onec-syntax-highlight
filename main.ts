@@ -1,21 +1,20 @@
 import { Plugin } from 'obsidian';
+import Prism from 'prismjs';
 import { createOneCMode } from './onec-cm-mode';
 import { buildOneCPrismGrammar } from './onec-prism';
+
+// Свой экземпляр Prism: не подсвечиваем блоки автоматически — только
+// явные вызовы из пост-процессора (иначе Prism трогает чужие блоки).
+Prism.manual = true;
 
 interface CodeMirrorCompat {
   defineMode(name: string, factory: unknown): void;
   modes?: Record<string, unknown>;
 }
 
-interface PrismCompat {
-  languages: Record<string, unknown> & { markup?: unknown };
-  highlightElement(element: Element): void;
-}
-
 declare global {
   interface Window {
     CodeMirror?: CodeMirrorCompat;
-    Prism?: PrismCompat;
   }
 }
 
@@ -29,11 +28,12 @@ const EDITOR_MODE_NAMES = ['1c', '1C', '1', 'bsl'];
 const LANGUAGE_CLASS_TEST = /(?:^|\s)language-1[cс](?=\s|$)/i;
 const LANGUAGE_CLASS_REPLACE = /language-1[cс](?=\s|$)/gi;
 
+// Грамматика режима чтения собирается один раз. Prism входит в бандл
+// плагина, чтобы подсветка не зависела от версии Prism в Obsidian.
+const READING_GRAMMAR = buildOneCPrismGrammar() as Prism.Grammar;
+
 export default class OneCLanguagePlugin extends Plugin {
   private readonly modeFactories = new Map<string, unknown>();
-  private prismTimer: number | null = null;
-  private prismGrammarsRegistered = false;
-  private createdPrismGrammar = false;
 
   async onload() {
     this.registerEditorModes();
@@ -47,17 +47,13 @@ export default class OneCLanguagePlugin extends Plugin {
 
     this.app.workspace.onLayoutReady(() => {
       this.registerEditorModes();
-      this.watchPrism();
+      // Блоки, отрендеренные до загрузки плагина
+      this.highlightAllBlocks();
     });
   }
 
   onunload() {
-    if (this.prismTimer !== null) {
-      window.clearInterval(this.prismTimer);
-      this.prismTimer = null;
-    }
     this.unregisterEditorModes();
-    this.unregisterPrismGrammars();
   }
 
   // ------------------------- Редактор (CodeMirror) -------------------------
@@ -94,55 +90,6 @@ export default class OneCLanguagePlugin extends Plugin {
 
   // ------------------------- Режим чтения (Prism) -------------------------
 
-  // Prism в Obsidian загружается лениво; ждём появления ядра,
-  // но не дольше 10 минут (позже сработает post processor при рендере блока)
-  private watchPrism() {
-    if (this.ensurePrismGrammars()) {
-      this.highlightAllBlocks();
-      return;
-    }
-    let attempts = 0;
-    this.prismTimer = window.setInterval(() => {
-      if (++attempts >= 1200 || this.ensurePrismGrammars()) {
-        if (this.prismTimer !== null) {
-          window.clearInterval(this.prismTimer);
-          this.prismTimer = null;
-        }
-        if (attempts < 1200) this.highlightAllBlocks();
-      }
-    }, 500);
-  }
-
-  private ensurePrismGrammars(): boolean {
-    const prism = window.Prism;
-    if (!prism || !prism.languages || !prism.languages.markup) return false;
-    if (!this.prismGrammarsRegistered) {
-      if (!prism.languages['1c']) {
-        prism.languages['1c'] = buildOneCPrismGrammar();
-        this.createdPrismGrammar = true;
-      }
-      if (!prism.languages['1']) {
-        prism.languages['1'] = prism.languages['1c'];
-      }
-      this.prismGrammarsRegistered = true;
-    }
-    return true;
-  }
-
-  private unregisterPrismGrammars() {
-    const prism = window.Prism;
-    if (prism && prism.languages && this.prismGrammarsRegistered) {
-      if (prism.languages['1'] === prism.languages['1c']) {
-        delete prism.languages['1'];
-      }
-      if (this.createdPrismGrammar) {
-        delete prism.languages['1c'];
-      }
-      this.prismGrammarsRegistered = false;
-      this.createdPrismGrammar = false;
-    }
-  }
-
   private processRenderedBlocks(container: HTMLElement) {
     const codes = container.querySelectorAll('pre > code');
     for (let i = 0; i < codes.length; i++) {
@@ -169,9 +116,9 @@ export default class OneCLanguagePlugin extends Plugin {
   }
 
   private highlightElement(code: HTMLElement) {
-    if (!this.ensurePrismGrammars()) return;
+    const text = code.textContent ?? '';
     try {
-      window.Prism?.highlightElement(code);
+      code.innerHTML = Prism.highlight(text, READING_GRAMMAR, '1c');
     } catch (e) {
       console.error('1C language: ошибка подсветки Prism', e);
     }

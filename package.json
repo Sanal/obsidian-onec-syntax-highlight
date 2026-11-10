@@ -15,9 +15,13 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/prismjs": "^1.26.6",
     "esbuild": "^0.24.0",
     "obsidian": "^1.7.0",
     "prettier": "^3.9.10",
     "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "prismjs": "^1.30.0"
   }
 }
