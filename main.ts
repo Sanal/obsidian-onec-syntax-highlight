@@ -118,10 +118,43 @@ export default class OneCLanguagePlugin extends Plugin {
   private highlightElement(code: HTMLElement) {
     const text = code.textContent ?? '';
     try {
-      code.innerHTML = Prism.highlight(text, READING_GRAMMAR, '1c');
+      const fragment = document.createDocumentFragment();
+      this.appendTokens(fragment, Prism.tokenize(text, READING_GRAMMAR));
+      code.replaceChildren(fragment);
     } catch (e) {
       console.error('1C language: ошибка подсветки Prism', e);
     }
+  }
+
+  // Собирает разметку токенов DOM-элементами (без innerHTML):
+  // классы span'ов совпадают с тем, что выдаёт Prism.stringify
+  // («token <тип> [<alias>…]»), текст уходит через createTextNode.
+  private appendTokens(parent: Node, tokens: Prism.TokenStream): void {
+    if (typeof tokens === 'string') {
+      parent.appendChild(document.createTextNode(tokens));
+      return;
+    }
+    if (tokens instanceof Prism.Token) {
+      parent.appendChild(this.buildTokenElement(tokens));
+      return;
+    }
+    for (const token of tokens) {
+      parent.appendChild(
+        typeof token === 'string'
+          ? document.createTextNode(token)
+          : this.buildTokenElement(token)
+      );
+    }
+  }
+
+  private buildTokenElement(token: Prism.Token): HTMLSpanElement {
+    const span = document.createElement('span');
+    const alias = Array.isArray(token.alias)
+      ? token.alias.join(' ')
+      : token.alias;
+    span.className = 'token ' + token.type + (alias ? ' ' + alias : '');
+    this.appendTokens(span, token.content);
+    return span;
   }
 
   private highlightAllBlocks() {

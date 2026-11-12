@@ -1,9 +1,11 @@
 {
 	"compilerOptions": {
+		"ignoreDeprecations": "6.0",
 		"baseUrl": ".",
 		"inlineSourceMap": true,
 		"inlineSources": true,
 		"module": "ESNext",
+		"esModuleInterop": true,
 		"target": "ES2018",
 		"allowJs": true,
 		"noImplicitAny": true,

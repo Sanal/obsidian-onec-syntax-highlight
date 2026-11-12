@@ -1,7 +1,7 @@
 {
   "id": "onec-syntax-highlight",
   "name": "1C (BSL) Language Support",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "minAppVersion": "1.4.0",
   "description": "Syntax highlighting for 1C:Enterprise (BSL) code blocks in Markdown files.",
   "author": "Sanal Tserenov",

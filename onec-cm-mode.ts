@@ -24,6 +24,7 @@ export interface OneCStream {
 	match(re: RegExp, consume?: boolean): RegExpMatchArray | null | undefined;
 	skipToEnd(): void;
 	column(): number;
+	current(): string;
 }
 
 export interface OneCState {
@@ -177,7 +178,7 @@ export function createOneCMode(): {
 
 			// Идентификатор (кириллица и латиница)
 			if (stream.match(/^[A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*/)) {
-				const word = ((stream as unknown as { current(): string }).current() || "").toLowerCase();
+				const word = stream.current().toLowerCase();
 				if (state.defNext) {
 					state.defNext = false;
 					state.afterDef = true;
