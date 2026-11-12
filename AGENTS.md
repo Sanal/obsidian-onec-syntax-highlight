@@ -35,13 +35,11 @@
 ### Исходный код (линтеры ревью)
 
 - **Запрещено присваивание `innerHTML`/`outerHTML`/`insertAdjacentHTML`**
-  (блокирующая ошибка `no-unsanitized`). HTML собирать DOM-элементами
-  (`createEl`/`createSpan`/`createTextNode`, `replaceChildren`).
-  См. `appendTokens`/`buildTokenElement` в `main.ts`.
-- **Использовать хелперы Obsidian `createEl`/`createSpan`/`createDiv` вместо
-  `document.createElement`** (правило `obsidianmd/prefer-create-el`).
-  Текущий долг: `main.ts`, методы `appendTokens`/`buildTokenElement`
-  (замечание получено на ревью 1.0.5, исправить при следующем касании).
+  (блокирующая ошибка `no-unsanitized`). HTML собирать хелперами Obsidian
+  (`createSpan`/`appendText`/`empty`), см. `appendTokens`/`appendToken` в `main.ts`.
+- **Использовать хелперы Obsidian `createEl`/`createSpan`/`appendText`/`empty`
+  вместо `document.createElement`/`createTextNode`** (правило
+  `obsidianmd/prefer-create-el`). См. `appendTokens`/`appendToken` в `main.ts`.
 - **Никакого неявного `any`**: внешние объекты (стримы CodeMirror и т.п.)
   описывать интерфейсом полностью — иначе `no-unsafe-assignment/call/
   member-access`. Касты `as unknown as ...` не считаются типизацией.

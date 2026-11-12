@@ -118,9 +118,8 @@ export default class OneCLanguagePlugin extends Plugin {
   private highlightElement(code: HTMLElement) {
     const text = code.textContent ?? '';
     try {
-      const fragment = document.createDocumentFragment();
-      this.appendTokens(fragment, Prism.tokenize(text, READING_GRAMMAR));
-      code.replaceChildren(fragment);
+      code.empty();
+      this.appendTokens(code, Prism.tokenize(text, READING_GRAMMAR));
     } catch (e) {
       console.error('1C language: ошибка подсветки Prism', e);
     }
@@ -128,33 +127,33 @@ export default class OneCLanguagePlugin extends Plugin {
 
   // Собирает разметку токенов DOM-элементами (без innerHTML):
   // классы span'ов совпадают с тем, что выдаёт Prism.stringify
-  // («token <тип> [<alias>…]»), текст уходит через createTextNode.
+  // («token <тип> [<alias>…]»), текст уходит через appendText.
   private appendTokens(parent: Node, tokens: Prism.TokenStream): void {
     if (typeof tokens === 'string') {
-      parent.appendChild(document.createTextNode(tokens));
+      parent.appendText(tokens);
       return;
     }
     if (tokens instanceof Prism.Token) {
-      parent.appendChild(this.buildTokenElement(tokens));
+      this.appendToken(parent, tokens);
       return;
     }
     for (const token of tokens) {
-      parent.appendChild(
-        typeof token === 'string'
-          ? document.createTextNode(token)
-          : this.buildTokenElement(token)
-      );
+      if (typeof token === 'string') {
+        parent.appendText(token);
+      } else {
+        this.appendToken(parent, token);
+      }
     }
   }
 
-  private buildTokenElement(token: Prism.Token): HTMLSpanElement {
-    const span = document.createElement('span');
+  private appendToken(parent: Node, token: Prism.Token): void {
     const alias = Array.isArray(token.alias)
       ? token.alias.join(' ')
       : token.alias;
-    span.className = 'token ' + token.type + (alias ? ' ' + alias : '');
+    const span = parent.createSpan({
+      cls: 'token ' + token.type + (alias ? ' ' + alias : ''),
+    });
     this.appendTokens(span, token.content);
-    return span;
   }
 
   private highlightAllBlocks() {
