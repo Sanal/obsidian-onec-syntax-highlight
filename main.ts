@@ -47,9 +47,18 @@ export default class OneCLanguagePlugin extends Plugin {
 
     this.app.workspace.onLayoutReady(() => {
       this.registerEditorModes();
-      // Блоки, отрендеренные до загрузки плагина
+      // DOM режима чтения при старте дозаполняется после layoutReady
+      // (отложенный рендер, фоновые вкладки) — проход повторяем с задержкой
       this.highlightAllBlocks();
+      window.setTimeout(() => this.highlightAllBlocks(), 500);
+      window.setTimeout(() => this.highlightAllBlocks(), 2000);
     });
+
+    // Смена листа/режима: подхватывает блоки, оставшиеся без подсветки
+    // после старта (preview не пересоздаётся при переключении чтение↔редакт.)
+    this.registerEvent(
+      this.app.workspace.on('layout-change', () => this.highlightAllBlocks())
+    );
   }
 
   onunload() {
